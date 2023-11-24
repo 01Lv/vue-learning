@@ -60,8 +60,8 @@ export default {
             //获取用户列表的参数对象
             queryInfo: {
                 query: '',
-                pagenum: 1,
-                pagesize: 2
+                pageNum: 1,
+                pageSize: 2
             },
             userlist: [],
             total: 0
@@ -72,7 +72,7 @@ export default {
     },
     methods: {
         async getUserList() {
-            const { data: res } = await this.$http.get('users', { params: this.queryInfo })
+            const { data: res } = await this.$http.post('users', this.queryInfo)
             if (res.code !== 200) return this.$message.error('获取用户列表失败')
             this.userlist = res.data
             this.total = res.total
