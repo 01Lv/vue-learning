@@ -12,8 +12,8 @@
             <!-- 搜索添加区域 -->
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-input placeholder="请输入内容">
-                        <el-button slot="append" icon="el-icon-search"></el-button>
+                    <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
+                        <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="4">
@@ -30,7 +30,7 @@
                 <el-table-column label="角色" prop="role"></el-table-column>
                 <el-table-column label="状态" prop="stat">
                     <template slot-scope="scope">
-                        <el-switch v-model="scope.row.stat"></el-switch>
+                        <el-switch v-model="scope.row.stat" @change="userStateChanged(scope.row)"></el-switch>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" width="180px">
@@ -61,7 +61,7 @@ export default {
             queryInfo: {
                 query: '',
                 pageNum: 1,
-                pageSize: 2
+                pageSize: 10
             },
             userlist: [],
             total: 0
@@ -86,6 +86,16 @@ export default {
         handleCurrentChange(newPage) {
             this.queryInfo.pagenum = newPage
             this.getUserList()
+        },
+        //监听 switch 开关状态改变
+        async userStateChanged(userinfo){
+            console.log(userinfo)
+            const {data: res } = await this.$http.put(`userStateUpdate/${userinfo.id}/${userinfo.stat}`)
+            if(res.code !== 200){
+                userinfo.stat = !userinfo.stat
+                return this.$message.error('更新用户状态失败')
+            }
+            this.$message.success('更新用户信息成功')
         }
     }
 }
