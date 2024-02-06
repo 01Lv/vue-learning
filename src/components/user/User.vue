@@ -37,7 +37,8 @@
                     <template slot-scope="scope">
                         <el-button type="primary" icon="el-icon-edit" size="mini"
                             @click="editUserDialog(scope.row.id)"></el-button>
-                        <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+                        <el-button type="danger" icon="el-icon-delete" size="mini"
+                            @click="deleteUser(scope.row.id)"></el-button>
                         <el-tooltip effect="dark" content="设置" placement="top" :enterable="false">
                             <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
                         </el-tooltip>
@@ -120,10 +121,10 @@ export default {
             },
             //编辑表单
             editForm: {
-                id:{},
-                name:'',
-                email:'',
-                phone:''
+                id: {},
+                name: '',
+                email: '',
+                phone: ''
             },
             //添加表单的验证规则对象
             addFormRules: {
@@ -239,9 +240,9 @@ export default {
         //监听修改用户确定按键
         editUser() {
             this.$refs.editFormRef.validate(async valid => {
-                if(!valid) return
-                const {data:res} = await this.$http.put('editUser',this.editForm)
-                if(res.code !== 200){
+                if (!valid) return
+                const { data: res } = await this.$http.put('editUser', this.editForm)
+                if (res.code !== 200) {
                     this.$message.error('修改用户失败')
                 }
                 this.$message.success('修改用户成功')
@@ -259,6 +260,24 @@ export default {
             }
             this.editForm = res.data
             this.editDialogVisible = true;
+        },
+        //删除用户操作
+        async deleteUser(id) {
+            const confirmResult = await this.$confirm('此操作将永久删除该用户?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).catch(err => err);
+
+            if (confirmResult == 'confirm') {
+                const {data: res} = await this.$http.delete('delete/' + id)
+                if(res.code !== 200){
+                    this.$message.error('删除用户信息失败')
+                }
+                this.$message.success('删除用户成功')
+                //刷新用户列表
+                this.getUserList()
+            }
         }
     }
 }
