@@ -4,6 +4,7 @@ import Login from './components/Login.vue';
 import Home from './components/Home.vue';
 import Welcome from './components/Welcome.vue'
 import User from './components/user/User.vue'
+import Rights from './components/authority/Rights.vue'
 
 Vue.use(VueRouter)
 
@@ -29,6 +30,10 @@ const router = new VueRouter({
                 {
                     path: '/merchant11',
                     component: User
+                },
+                {
+                    path: '/rights',
+                    component: Rights
                 }
             ]
         }
