@@ -14,7 +14,16 @@
 
             <el-table :data="roleList" border stripe>
                 <!--展开列-->
-                <el-table-column type="expand"></el-table-column>
+                <el-table-column type="expand">
+                    <template slot-scope="scope">
+                        <el-row v-for="(item1, i1) in scope.row.rights" :key="item1.id">
+                            <!-- 渲染一级权限 -->
+                            <el-col :span="5">
+                                <el-tag closable @close="removeByRightId(scope.row, item1.id)">{{ item1.desc }}</el-tag>
+                            </el-col>
+                        </el-row>
+                    </template>
+                </el-table-column>
                 <!--索引列-->
                 <el-table-column type="index"></el-table-column>
                 <el-table-column label="角色名称" prop="roleName"></el-table-column>
@@ -50,9 +59,41 @@ export default {
             this.$message.success('查询角色信息成功')
             this.roleList = res.data
             console.log(this.roleList)
+        },
+        //根据id删除对应权限
+        async removeByRightId(role, rightId) {
+            //弹窗提示用户是否要删除
+            const confirmResult = await this.$confirm('此操作将永久删除', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).catch(err => err)
+
+            if (confirmResult !== 'confirm') {
+                return this.$message.info('取消删除')
+            }
+            const { data: res } = await this.$http.delete(`roles/${role.id}/${rightId}`).catch(err => {
+                this.$message.error('调用删除接口失败')
+            })
+            if(res.code !== 200){
+                this.$message.error('删除权限失败')
+            }
+            this.$message.info('删除权限成功')
         }
     }
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.el-tag {
+    margin: 7px;
+}
+
+.bdtop {
+    border-top: 1px solid #eee;
+}
+
+.bdbottom {
+    border-bottom: 1px solid #eee;
+}
+</style>
