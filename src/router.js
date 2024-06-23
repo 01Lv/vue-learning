@@ -6,6 +6,8 @@ import Welcome from './components/Welcome.vue'
 import User from './components/user/User.vue'
 import Rights from './components/authority/Rights.vue'
 import Roles from './components/authority/Roles.vue'
+import Category from './components/goods/Category.vue'
+import NotFound from '@/exception/404.vue'
 
 Vue.use(VueRouter)
 
@@ -16,7 +18,7 @@ const router = new VueRouter({
             redirect: '/login'
         },
         {
-            path: '/login', 
+            path: '/login',
             component: Login
         },
         {
@@ -39,8 +41,16 @@ const router = new VueRouter({
                 {
                     path: '/roles',
                     component: Roles
+                },
+                {
+                    path: '/category',
+                    component: Category
                 }
             ]
+        },
+        {
+            path: '/:pathMatch(.*)',
+            component: NotFound
         }
     ]
 })
@@ -50,10 +60,10 @@ router.beforeEach((to, from, next) => {
     //to 将要访问的路径
     //from 代表从哪个路径跳转而来
     //next 是函数，表示放行
-    if(to.path === '/login') return next()
+    if (to.path === '/login') return next()
     //获取token
     const tokenStr = window.sessionStorage.getItem('token')
-    if(!tokenStr) return next('/login');
+    if (!tokenStr) return next('/login');
     next()
 })
 
