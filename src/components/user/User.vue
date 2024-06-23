@@ -27,7 +27,7 @@
                 <el-table-column label="姓名" prop="name"></el-table-column>
                 <el-table-column label="邮箱" prop="email"></el-table-column>
                 <el-table-column label="电话" prop="phone"></el-table-column>
-                <el-table-column label="角色" prop="role"></el-table-column>
+                <el-table-column label="角色" prop="roleDesc"></el-table-column>
                 <el-table-column label="状态" prop="stat">
                     <template slot-scope="scope">
                         <el-switch v-model="scope.row.stat" @change="userStateChanged(scope.row)"></el-switch>
@@ -35,12 +35,13 @@
                 </el-table-column>
                 <el-table-column label="操作" width="180px">
                     <template slot-scope="scope">
-                        <el-button type="primary" icon="el-icon-edit" size="mini"
+                        <el-button type="primary" content="编辑用户" icon="el-icon-edit" size="mini"
                             @click="editUserDialog(scope.row.id)"></el-button>
-                        <el-button type="danger" icon="el-icon-delete" size="mini"
+                        <el-button type="danger" content="删除用户" icon="el-icon-delete" size="mini"
                             @click="deleteUser(scope.row.id)"></el-button>
-                        <el-tooltip effect="dark" content="设置" placement="top" :enterable="false">
-                            <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+                        <el-tooltip effect="dark" content="设置用户角色" placement="top" :enterable="false">
+                            <el-button type="warning" icon="el-icon-setting" size="mini"
+                                @click="showUserRightDialog(scope.row)"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -52,6 +53,17 @@
                 layout="total, sizes, prev, pager, next, jumper" :total="total">
             </el-pagination>
         </el-card>
+
+        <!--展示用户角色对话框-->
+        <el-dialog title="用户角色" :visible.sync="showUserRoleDialogVisible" width="50%" @close="userRoleDialogClose()">
+            <el-tree :data="roles" :props="userRoleTreeNode" show-checkbox node-key="id"
+                :default-checked-keys="defRoleKeys" ref="userRoleRef" @check-change="handleCheckChange">
+            </el-tree>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="showUserRoleDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="updateUserRole()">确 定</el-button>
+            </span>
+        </el-dialog>
 
         <!-- 添加用户对话框 -->
         <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed">
@@ -185,7 +197,18 @@ export default {
                         trigger: 'blur'
                     },
                 ]
-            }
+            },
+            //是否展示用户角色对话框
+            showUserRoleDialogVisible: false,
+            //所有角色
+            roles: [],
+            //所有角色模型
+            userRoleTreeNode: {
+                id: 'id',
+                label: 'roleName'
+            },
+            defRoleKeys: [],
+            userId: 0
         }
     },
     created() {
@@ -270,13 +293,58 @@ export default {
             }).catch(err => err);
 
             if (confirmResult == 'confirm') {
-                const {data: res} = await this.$http.delete('delete/' + id)
-                if(res.code !== 200){
+                const { data: res } = await this.$http.delete('delete/' + id)
+                if (res.code !== 200) {
                     this.$message.error('删除用户信息失败')
                 }
                 this.$message.success('删除用户成功')
                 //刷新用户列表
                 this.getUserList()
+            }
+        },
+        //显示用户角色对话框
+        async showUserRightDialog(user) {
+            this.userId = user.id
+            const { data: res } = await this.$http.get('roles')
+            if (res.code !== 200) {
+                this.$message.error('获取用户角色失败')
+            }
+            this.roles = res.data
+            this.getUserRole(user, this.defRoleKeys)
+            this.showUserRoleDialogVisible = true
+        },
+        //获取用户对应角色
+        getUserRole(user, arr) {
+            if (!user) {
+                return arr
+            }
+            arr.push(user.roleId)
+            return arr
+        },
+        //关闭用户角色对话框
+        userRoleDialogClose() {
+            this.defRoleKeys = []
+        },
+        //更新用户角色
+        async updateUserRole() {
+            const keys = [
+                ...this.$refs.userRoleRef.getCheckedKeys(),
+                ...this.$refs.userRoleRef.getHalfCheckedKeys()
+            ]
+            if (keys) {
+                const { data: res } = await this.$http.post(`/updateRole/${this.userId}`, keys)
+                if(res.code !== 200){
+                    this.$message.error('更新用户角色失败')
+                }
+                this.$message.info('更新用户角色成功')
+                this.getUserList()
+                this.showUserRoleDialogVisible = false
+            }
+        },
+        handleCheckChange(data, checked, indeterminate) {
+            console.log(data.id)
+            if(checked){
+                this.$refs.userRoleRef.setCheckedKeys([data.id])
             }
         }
     }

@@ -135,11 +135,12 @@ export default {
             ]
 
             if(keys){
-                const { data: res} = await this.$http.post(`/updateRole/${this.roleId}`,keys)
+                const { data: res} = await this.$http.post(`/updateRight/${this.roleId}`,keys)
                 if(res.code !== 200){
                     this.$message.error('更新角色权限失败')
                 }
             }
+            this.getRoleList()
             this.showRightDialogVisible = false
 
         }
