@@ -41,11 +41,12 @@
 
         <!-- 分配权限对话框 -->
         <el-dialog title="分配权限" :visible.sync="showRightDialogVisible" width="50%" @close="dialogClose">
-            <el-tree :data="rights" :props="treeNode" show-checkbox @check-change="handleCheckChange" node-key="id" :default-checked-keys="defKeys">
+            <el-tree :data="rights" :props="treeNode" show-checkbox node-key="id"
+                :default-checked-keys="defKeys" ref="treeRef">
             </el-tree>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="showRightDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="showRightDialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="updateRights()">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -65,7 +66,8 @@ export default {
                 label: 'desc'
             },
             //默认选中的节点id值数组
-            defKeys: []
+            defKeys: [],
+            roleId: 0
         }
     },
     created() {
@@ -103,28 +105,43 @@ export default {
         },
         //展示权限对话框
         async showRightDialog(role) {
+            this.roleId = role.id
             //获取所有权限数据
             const { data: res } = await this.$http.get('rights')
             if (res.code !== 200) {
                 this.$message.error('获取权限数据失败')
             }
             this.rights = res.data
-            console.log(role)
-            this.getDefKeys(role.rights,this.defKeys)
+            this.getDefKeys(role.rights, this.defKeys)
             this.showRightDialogVisible = true
         },
-        handleCheckChange(){},
+        handleCheckChange() { },
         //获取角色当前配置权限
-        getDefKeys(rights,arr){
-            if(!rights){
+        getDefKeys(rights, arr) {
+            if (!rights) {
                 return arr
             }
             rights.forEach(e => arr.push(e.id))
             return arr
         },
         //分配权限对话框关闭
-        dialogClose(){
+        dialogClose() {
             this.defKeys = []
+        },
+        async updateRights() {
+            const keys = [
+                ...this.$refs.treeRef.getCheckedKeys(),
+                ...this.$refs.treeRef.getHalfCheckedKeys()
+            ]
+
+            if(keys){
+                const { data: res} = await this.$http.post(`/updateRole/${this.roleId}`,keys)
+                if(res.code !== 200){
+                    this.$message.error('更新角色权限失败')
+                }
+            }
+            this.showRightDialogVisible = false
+
         }
     }
 }
