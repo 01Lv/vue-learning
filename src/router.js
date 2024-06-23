@@ -33,7 +33,7 @@ const router = new VueRouter({
                     component: User
                 },
                 {
-                    path: '/rights',
+                    path: '/menus2',
                     component: Rights
                 },
                 {

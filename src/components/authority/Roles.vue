@@ -32,11 +32,22 @@
                     <template slot-scope="scope">
                         <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
                         <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
-                        <el-button size="mini" type="warning" icon="el-icon-setting">分配权限</el-button>
+                        <el-button size="mini" type="warning" icon="el-icon-setting"
+                            @click="showRightDialog(scope.row)">分配权限</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </el-card>
+
+        <!-- 分配权限对话框 -->
+        <el-dialog title="分配权限" :visible.sync="showRightDialogVisible" width="50%" @close="dialogClose">
+            <el-tree :data="rights" :props="treeNode" show-checkbox @check-change="handleCheckChange" node-key="id" :default-checked-keys="defKeys">
+            </el-tree>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="showRightDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="showRightDialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -44,7 +55,17 @@
 export default {
     data() {
         return {
-            roleList: []
+            roleList: [],
+            //控制分配权限对话框显示
+            showRightDialogVisible: false,
+            //所有权限数据
+            rights: [],
+            treeNode: {
+                id: 'id',
+                label: 'desc'
+            },
+            //默认选中的节点id值数组
+            defKeys: []
         }
     },
     created() {
@@ -75,10 +96,35 @@ export default {
             const { data: res } = await this.$http.delete(`roles/${role.id}/${rightId}`).catch(err => {
                 this.$message.error('调用删除接口失败')
             })
-            if(res.code !== 200){
+            if (res.code !== 200) {
                 this.$message.error('删除权限失败')
             }
             this.$message.info('删除权限成功')
+        },
+        //展示权限对话框
+        async showRightDialog(role) {
+            //获取所有权限数据
+            const { data: res } = await this.$http.get('rights')
+            if (res.code !== 200) {
+                this.$message.error('获取权限数据失败')
+            }
+            this.rights = res.data
+            console.log(role)
+            this.getDefKeys(role.rights,this.defKeys)
+            this.showRightDialogVisible = true
+        },
+        handleCheckChange(){},
+        //获取角色当前配置权限
+        getDefKeys(rights,arr){
+            if(!rights){
+                return arr
+            }
+            rights.forEach(e => arr.push(e.id))
+            return arr
+        },
+        //分配权限对话框关闭
+        dialogClose(){
+            this.defKeys = []
         }
     }
 }
