@@ -62,6 +62,11 @@ export default {
         this.getMenuList(),
         this.activePath = window.sessionStorage.getItem('activePath')
     },
+    mounted(){
+        if(!this.$store.state.userInfo){
+            this.$router.push('/login')
+        }
+    },
     methods: {
         logout() {
             window.sessionStorage.clear()

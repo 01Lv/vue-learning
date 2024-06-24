@@ -7,7 +7,7 @@ import User from './components/user/User.vue'
 import Rights from './components/authority/Rights.vue'
 import Roles from './components/authority/Roles.vue'
 import Category from './components/goods/Category.vue'
-import NotFound from '@/exception/404.vue'
+import NotFound from './components/exception/404.vue'
 
 Vue.use(VueRouter)
 

@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/global.css'
 import './plugins/element.js'
 import axios from 'axios'
+import store from './components/store/index.js'
 
 axios.defaults.baseURL = 'http://127.0.0.1:8090/base'
 axios.interceptors.request.use(config => {
@@ -20,5 +21,6 @@ Vue.config.productionTip = false
 new Vue({
   render: h => h(App),
   router,
-  ElementUI
+  ElementUI,
+  store
 }).$mount('#app')
