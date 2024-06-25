@@ -333,7 +333,7 @@ export default {
             ]
             if (keys) {
                 const { data: res } = await this.$http.post(`/updateRole/${this.userId}`, keys)
-                if(res.code !== 200){
+                if (res.code !== 200) {
                     this.$message.error('更新用户角色失败')
                 }
                 this.$message.info('更新用户角色成功')

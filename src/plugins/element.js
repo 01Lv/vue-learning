@@ -6,8 +6,8 @@ import { Button, Form, FormItem,
     Breadcrumb,BreadcrumbItem,
     Card,Row,Col,
     Table,TableColumn,Switch,Tooltip,Pagination,
-    Dialog, 
-    MessageBox,Tree,
+    Dialog,Dropdown, DropdownMenu,DropdownItem,
+    MessageBox,Tree,Select,Option,
     Tag} from 'element-ui';
 
 Vue.use(Button)
@@ -35,5 +35,10 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(Dropdown)
+Vue.use(DropdownMenu)
+Vue.use(DropdownItem)
+Vue.use(Select)
+Vue.use(Option)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

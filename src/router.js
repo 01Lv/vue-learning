@@ -8,6 +8,7 @@ import Rights from './components/authority/Rights.vue'
 import Roles from './components/authority/Roles.vue'
 import Category from './components/goods/Category.vue'
 import NotFound from './components/exception/404.vue'
+import OnlineUser from './components/user/OnlineUser.vue'
 
 Vue.use(VueRouter)
 
@@ -45,6 +46,10 @@ const router = new VueRouter({
                 {
                     path: '/category',
                     component: Category
+                },
+                {
+                    path: '/onlineUser',
+                    component: OnlineUser
                 }
             ]
         },
