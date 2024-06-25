@@ -4,7 +4,7 @@
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item>商户管理</el-breadcrumb-item>
-            <el-breadcrumb-item>商户管理子1</el-breadcrumb-item>
+            <el-breadcrumb-item>用户管理</el-breadcrumb-item>
         </el-breadcrumb>
 
         <!-- 卡片区域 -->

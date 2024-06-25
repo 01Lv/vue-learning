@@ -31,7 +31,7 @@ const router = new VueRouter({
                     component: Welcome
                 },
                 {
-                    path: '/merchant11',
+                    path: '/user',
                     component: User
                 },
                 {
