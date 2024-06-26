@@ -18,22 +18,23 @@
             </el-dropdown>
 
             <div class="c2">
-                <el-input placeholder="请输入内容" v-model="inputData" clearable class="input-with-select">
+                <el-input placeholder="请输入内容" v-model="inputData" clearable class="input-with-select"
+                    @clear="getOnlineUserList">
                     <el-select v-model="selectData" slot="prepend">
-                        <el-option v-for="item in selectOptions" :label="item.label" :value="item.value" :key="item.label"></el-option>
+                        <el-option v-for="item in selectOptions" :label="item.label" :value="item.value"
+                            :key="item.label"></el-option>
                     </el-select>
                     <el-button slot="append" icon="el-icon-search" @click="getOnlineUserList"></el-button>
                 </el-input>
                 <div class="btn-group">
                     <el-button type="primary" icon="el-icon-setting" circle></el-button>
-                    <el-button type="success" icon="el-icon-refresh" circle></el-button>
-
+                    <el-button type="success" icon="el-icon-refresh" @click="refreshOnlineUserList" circle></el-button>
                 </div>
             </div>
         </div>
 
         <el-card>
-            <el-table :data="onlineUserList" style="margin-top: 0;">
+            <el-table :loading="tableLoading" :data="onlineUserList" style="margin-top: 0;">
                 <el-table-column prop="userId" label="用户" />
                 <el-table-column prop="loginIp" label="登录ip" />
                 <el-table-column prop="loginCity" label="登录城市" />
@@ -41,8 +42,7 @@
                 <el-table-column prop="actived" label="活跃" />
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <el-button type="danger" content="下线" icon="el-icon-delete" size="mini"
-                            @click="offline(scope.row.userId)"></el-button>
+                        <el-button type="danger" size="mini" @click="offline(scope.row.id)">下线</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -68,7 +68,7 @@ export default {
             searchReq: {
                 loginCity: '',
                 loginIp: '',
-                actived: 1,
+                actived: null,
                 pageNum: 0,
                 pageSize: 5
             },
@@ -85,7 +85,9 @@ export default {
                     label: '登录ip',
                     value: 3
                 }
-            ]
+            ],
+            tableLoading: false,
+            refresh: false
         }
     },
     created() {
@@ -93,6 +95,7 @@ export default {
     },
     methods: {
         async getOnlineUserList() {
+            this.tableLoading = true
             if (this.selectData) {
                 if (1 === this.selectData) {
                     this.searchReq.actived = this.inputData
@@ -106,17 +109,49 @@ export default {
             console.log(this.searchReq)
             const { data: res } = await this.$http.post('getOnlineUserList', this.searchReq)
             if (res.code !== 200) {
+                this.tableLoading = false
                 return this.$message.error('获取在线用户列表失败')
             }
             this.onlineUserList = res.data
             this.total = res.total
-            console.log(this.onlineUserList)
+            this.tableLoading = false
+            this.resetSearchReq()
+            console.log(this.searchReq)
         },
-        offline(userId) {
+        async offline(id) {
 
+            console.log(id)
+            await this.$http.put(`offline/${id}`)
+                .then(res => {
+
+                }).catch(err => {
+                    return this.$message.error('调用下线接口失败')
+                })
+
+            window.sessionStorage.removeItem('token')
+            if (!window.sessionStorage.getItem('toke')) {
+                this.getOnlineUserList()
+                return this.$message.info('下线成功')
+            } else {
+                return this.$message.error('下线失败')
+            }
+        },
+        refreshOnlineUserList() {
+            this.selectData = ''
+            this.inputData = ''
+            this.getOnlineUserList()
         },
         handleSizeChange() { },
-        handleCurrentChange() { }
+        handleCurrentChange() { },
+        resetSearchReq() {
+            this.searchReq = {
+                loginCity: '',
+                loginIp: '',
+                actived: null,
+                pageNum: 0,
+                pageSize: 5
+            }
+        }
     }
 }
 </script>

@@ -11,13 +11,13 @@
         <el-container>
             <!-- 侧边栏 -->
             <el-aside :width="isCollapse ? '64px' : '200px'">
-                <div class="toggle-button" @click="toggleCollapse">###</div>
+                <div class="toggle-button" @click="toggleCollapse">{{ toggleCollapseData }}</div>
                 <!-- 侧边栏菜单区域 -->
-                <el-menu background-color="rgb(54, 80, 128)" text-color="#fff" 
-                active-text-color="#ffd04b" unique-opened :collapse="isCollapse" :collapse-transition="false" 
-                router :default-active="activePath">
+                <el-menu background-color="rgb(54, 80, 128)" text-color="#fff" active-text-color="#ffd04b" unique-opened
+                    :collapse="isCollapse" :collapse-transition="false" router :default-active="activePath">
                     <!-- 一级菜单 -->
-                    <el-submenu :index="item.id+''" v-for="item in menulist" :key="item.id" @click="saveNavState(subItem.path)">
+                    <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id"
+                        @click="saveNavState(subItem.path)">
                         <!-- 一级菜单模板区域 -->
                         <template slot="title">
                             <!-- 图标 -->
@@ -28,11 +28,11 @@
                         <!-- 二级菜单 -->
                         <el-menu-item :index="subItem.path" v-for="subItem in item.child" :key="subItem.id">
                             <template slot="title">
-                            <!-- 图标 -->
-                            <i class="el-icon-location"></i>
-                            <!-- 文本 -->
-                            <span>{{ subItem.name }}</span>
-                        </template>
+                                <!-- 图标 -->
+                                <i class="el-icon-location"></i>
+                                <!-- 文本 -->
+                                <span>{{ subItem.name }}</span>
+                            </template>
                         </el-menu-item>
                     </el-submenu>
                 </el-menu>
@@ -48,22 +48,23 @@
 
 <script>
 export default {
-    data(){
+    data() {
         return {
             //左侧菜单数据
             menulist: [],
             //是否折叠
             isCollapse: false,
             //被激活的链接
-            activePath: ''
+            activePath: '',
+            toggleCollapseData: '<<<'
         }
     },
-    created(){
+    created() {
         this.getMenuList(),
-        this.activePath = window.sessionStorage.getItem('activePath')
+            this.activePath = window.sessionStorage.getItem('activePath')
     },
-    mounted(){
-        if(!this.$store.state.userInfo){
+    mounted() {
+        if (!this.$store.state.userInfo) {
             this.$router.push('/login')
         }
     },
@@ -74,17 +75,22 @@ export default {
         },
         //获取所有的菜单
         async getMenuList() {
-            const{ data: res } = await this.$http.get("menus")
-            if(res.code !== 200) return this.$message.error(res.msg)
+            const { data: res } = await this.$http.get("menus")
+            if (res.code !== 200) return this.$message.error(res.msg)
             this.menulist = res.data
         },
         //点击按钮，折叠菜单
-        toggleCollapse(){
+        toggleCollapse() {
             this.isCollapse = !this.isCollapse
+            if (this.isCollapse) {
+                this.toggleCollapseData = '>>>'
+            } else {
+                this.toggleCollapseData = '<<<'
+            }
         },
         //保存链接激活状态
         saveNavState(activePath) {
-            window.sessionStorage.setItem('activePath',activePath)
+            window.sessionStorage.setItem('activePath', activePath)
             this.activePath = activePath
         }
     }
@@ -104,6 +110,7 @@ export default {
 
 .el-aside {
     background-color: rgb(54, 80, 128);
+
     .el-menu {
         border-right: none;
     }

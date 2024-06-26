@@ -10,7 +10,6 @@ import store from './components/store/index.js'
 
 axios.defaults.baseURL = 'http://127.0.0.1:8090/base'
 axios.interceptors.request.use(config => {
-  console.log(config)
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config
 })
