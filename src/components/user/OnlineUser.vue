@@ -18,13 +18,11 @@
             </el-dropdown>
 
             <div class="c2">
-                <el-input placeholder="请输入内容" v-model="searchReq.loginCity" clearable class="input-with-select">
+                <el-input placeholder="请输入内容" v-model="inputData" clearable class="input-with-select">
                     <el-select v-model="selectData" slot="prepend">
-                        <el-option label="活跃" value="1"></el-option>
-                        <el-option label="城市" value="2"></el-option>
-                        <el-option label="ip" value="3"></el-option>
+                        <el-option v-for="item in selectOptions" :label="item.label" :value="item.value" :key="item.label"></el-option>
                     </el-select>
-                    <el-button slot="append" icon="el-icon-search"></el-button>
+                    <el-button slot="append" icon="el-icon-search" @click="getOnlineUserList"></el-button>
                 </el-input>
                 <div class="btn-group">
                     <el-button type="primary" icon="el-icon-setting" circle></el-button>
@@ -43,15 +41,15 @@
                 <el-table-column prop="actived" label="活跃" />
                 <el-table-column label="操作">
                     <template slot-scope="scope">
-                        <el-button type="danger" content="下线" icon="el-icon-delete" 
-                        size="mini" @click="offline(scope.row.userId)"></el-button>
+                        <el-button type="danger" content="下线" icon="el-icon-delete" size="mini"
+                            @click="offline(scope.row.userId)"></el-button>
                     </template>
                 </el-table-column>
             </el-table>
 
             <div class="c3">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="searchReq.pageNum" :page-size="searchReq.pageSize" 
+                    :current-page.sync="searchReq.pageNum" :page-size="searchReq.pageSize"
                     layout="total, prev, pager, next" :total="total">
                 </el-pagination>
             </div>
@@ -63,7 +61,8 @@
 export default {
     data() {
         return {
-            selectData: 0,
+            selectData: '',
+            inputData: '',
             onlineUserList: [],
             total: 0,
             searchReq: {
@@ -72,27 +71,52 @@ export default {
                 actived: 1,
                 pageNum: 0,
                 pageSize: 5
-            }
+            },
+            selectOptions: [
+                {
+                    label: '活跃',
+                    value: 1
+                },
+                {
+                    label: '登录城市',
+                    value: 2
+                },
+                {
+                    label: '登录ip',
+                    value: 3
+                }
+            ]
         }
     },
-    created(){
+    created() {
         this.getOnlineUserList()
     },
     methods: {
-        async getOnlineUserList(){
-            const {data :res} = await this.$http.post('getOnlineUserList',this.searchReq)
-            if(res.code !== 200){
+        async getOnlineUserList() {
+            if (this.selectData) {
+                if (1 === this.selectData) {
+                    this.searchReq.actived = this.inputData
+                } else if (2 === this.selectData) {
+                    this.searchReq.loginCity = this.inputData
+                }
+                else if (3 === this.selectData) {
+                    this.searchReq.loginIp = this.inputData
+                }
+            }
+            console.log(this.searchReq)
+            const { data: res } = await this.$http.post('getOnlineUserList', this.searchReq)
+            if (res.code !== 200) {
                 return this.$message.error('获取在线用户列表失败')
             }
             this.onlineUserList = res.data
             this.total = res.total
-            console.log(res.data)
+            console.log(this.onlineUserList)
         },
-        offline(userId){
+        offline(userId) {
 
         },
-        handleSizeChange() {},
-        handleCurrentChange() {}
+        handleSizeChange() { },
+        handleCurrentChange() { }
     }
 }
 </script>
@@ -132,5 +156,9 @@ export default {
     justify-content: space-evenly;
     align-items: center;
     padding-left: 10px;
+}
+
+.el-select {
+    width: 130px;
 }
 </style>
