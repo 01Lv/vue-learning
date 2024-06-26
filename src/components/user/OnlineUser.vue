@@ -18,7 +18,7 @@
             </el-dropdown>
 
             <div class="c2">
-                <el-input placeholder="请输入内容" v-model="searchData" class="input-with-select">
+                <el-input placeholder="请输入内容" v-model="searchReq.loginCity" clearable class="input-with-select">
                     <el-select v-model="selectData" slot="prepend">
                         <el-option label="活跃" value="1"></el-option>
                         <el-option label="城市" value="2"></el-option>
@@ -35,18 +35,24 @@
         </div>
 
         <el-card>
-            <el-table :data="tableData" style="margin-top: 0;">
-                <el-table-column prop="userName" label="用户" />
+            <el-table :data="onlineUserList" style="margin-top: 0;">
+                <el-table-column prop="userId" label="用户" />
                 <el-table-column prop="loginIp" label="登录ip" />
                 <el-table-column prop="loginCity" label="登录城市" />
-                <el-table-column prop="createdDate" label="创建日期" />
-                <el-table-column prop="activeOrNot" label="活跃" />
-                <el-table-column prop="operate" label="操作" />
+                <el-table-column prop="createDate" label="登录日期" />
+                <el-table-column prop="actived" label="活跃" />
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="danger" content="下线" icon="el-icon-delete" 
+                        size="mini" @click="offline(scope.row.userId)"></el-button>
+                    </template>
+                </el-table-column>
             </el-table>
 
             <div class="c3">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage1" :page-size="100" layout="total, prev, pager, next" :total="1000">
+                    :current-page.sync="searchReq.pageNum" :page-size="searchReq.pageSize" 
+                    layout="total, prev, pager, next" :total="total">
                 </el-pagination>
             </div>
         </el-card>
@@ -57,13 +63,36 @@
 export default {
     data() {
         return {
-            selectData: {},
-            searchData: '',
-            tableData: {}
+            selectData: 0,
+            onlineUserList: [],
+            total: 0,
+            searchReq: {
+                loginCity: '',
+                loginIp: '',
+                actived: 1,
+                pageNum: 0,
+                pageSize: 5
+            }
         }
     },
+    created(){
+        this.getOnlineUserList()
+    },
     methods: {
+        async getOnlineUserList(){
+            const {data :res} = await this.$http.post('getOnlineUserList',this.searchReq)
+            if(res.code !== 200){
+                return this.$message.error('获取在线用户列表失败')
+            }
+            this.onlineUserList = res.data
+            this.total = res.total
+            console.log(res.data)
+        },
+        offline(userId){
 
+        },
+        handleSizeChange() {},
+        handleCurrentChange() {}
     }
 }
 </script>
