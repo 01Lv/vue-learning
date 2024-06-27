@@ -8,7 +8,7 @@
         </el-breadcrumb>
 
         <div class="c1">
-            <el-dropdown>
+            <el-dropdown @command="batchOffline">
                 <span class="el-dropdown-link">
                     更多选择<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
@@ -34,7 +34,9 @@
         </div>
 
         <el-card>
-            <el-table :loading="tableLoading" :data="onlineUserList" style="margin-top: 0;">
+            <el-table :loading="tableLoading" :data="onlineUserList" ref="mutipleTable" 
+            @selection-change="handleSelectChange" style="margin-top: 0;">
+                <el-table-column type="selection" width="55" />
                 <el-table-column prop="userId" label="用户" />
                 <el-table-column prop="loginIp" label="登录ip" />
                 <el-table-column prop="loginCity" label="登录城市" />
@@ -87,7 +89,7 @@ export default {
                 }
             ],
             tableLoading: false,
-            refresh: false
+            selectRows: []
         }
     },
     created() {
@@ -106,7 +108,6 @@ export default {
                     this.searchReq.loginIp = this.inputData
                 }
             }
-            console.log(this.searchReq)
             const { data: res } = await this.$http.post('getOnlineUserList', this.searchReq)
             if (res.code !== 200) {
                 this.tableLoading = false
@@ -115,8 +116,6 @@ export default {
             this.onlineUserList = res.data
             this.total = res.total
             this.tableLoading = false
-            this.resetSearchReq()
-            console.log(this.searchReq)
         },
         async offline(id) {
 
@@ -143,15 +142,25 @@ export default {
         },
         handleSizeChange() { },
         handleCurrentChange() { },
-        resetSearchReq() {
-            this.searchReq = {
-                loginCity: '',
-                loginIp: '',
-                actived: null,
-                pageNum: 0,
-                pageSize: 5
-            }
+        handleSelectChange(val){
+            this.selectRows = val
+        },
+        async batchOffline(){
+            let fieldSet = new Set()
+            this.selectRows.forEach(e => {
+                fieldSet.add(e.id)
+            })
+            const newArr = Array.from(fieldSet)
+            const {data: res} = await this.$http.post('batchOffline',newArr)
+            .then(res=> {
+                window.sessionStorage.removeItem('token')
+                return this.$message.info('批量下线成功')
+            })
+            .catch(err => {
+                return this.$message.error('批量下线失败')
+            })
         }
+        
     }
 }
 </script>
