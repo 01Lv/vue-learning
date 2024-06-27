@@ -4,7 +4,7 @@ import { Button, Form, FormItem,
     Header, Aside, Main, 
     Menu, Submenu, MenuItemGroup, MenuItem,
     Breadcrumb,BreadcrumbItem,
-    Card,Row,Col,
+    Card,Row,Col,Alert,
     Table,TableColumn,Switch,Tooltip,Pagination,
     Dialog,Dropdown, DropdownMenu,DropdownItem,
     MessageBox,Tree,Select,Option,
@@ -40,5 +40,6 @@ Vue.use(DropdownMenu)
 Vue.use(DropdownItem)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Alert)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

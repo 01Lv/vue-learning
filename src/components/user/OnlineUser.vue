@@ -6,6 +6,8 @@
             <el-breadcrumb-item>用户管理</el-breadcrumb-item>
             <el-breadcrumb-item>在线用户</el-breadcrumb-item>
         </el-breadcrumb>
+        
+        <el-alert title="无法下线当前会话，因为该会话是当前用户的在线会话。" type="warning" show-icon></el-alert>
 
         <div class="c1">
             <el-dropdown @command="batchOffline">
@@ -20,7 +22,7 @@
             <div class="c2">
                 <el-input placeholder="请输入内容" v-model="inputData" clearable class="input-with-select"
                     @clear="getOnlineUserList">
-                    <el-select v-model="selectData" slot="prepend">
+                    <el-select v-model="selectData" slot="prepend" @change="selectChange">
                         <el-option v-for="item in selectOptions" :label="item.label" :value="item.value"
                             :key="item.label"></el-option>
                     </el-select>
@@ -52,7 +54,7 @@
             <div class="c3">
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                     :current-page.sync="searchReq.pageNum" :page-size="searchReq.pageSize"
-                    layout="total, prev, pager, next" :total="total">
+                    layout="total, sizes, prev, pager, next, jumper" :total="total">
                 </el-pagination>
             </div>
         </el-card>
@@ -72,7 +74,7 @@ export default {
                 loginIp: '',
                 actived: null,
                 pageNum: 0,
-                pageSize: 5
+                pageSize: 10
             },
             selectOptions: [
                 {
@@ -116,6 +118,7 @@ export default {
             this.onlineUserList = res.data
             this.total = res.total
             this.tableLoading = false
+            this.resetSearchReq()
         },
         async offline(id) {
 
@@ -128,7 +131,7 @@ export default {
                 })
 
             window.sessionStorage.removeItem('token')
-            if (!window.sessionStorage.getItem('toke')) {
+            if (!window.sessionStorage.getItem('token')) {
                 this.getOnlineUserList()
                 return this.$message.info('下线成功')
             } else {
@@ -140,10 +143,25 @@ export default {
             this.inputData = ''
             this.getOnlineUserList()
         },
-        handleSizeChange() { },
-        handleCurrentChange() { },
+        handleSizeChange(newSize) {
+            this.searchReq.pageSize = newSize
+            this.getOnlineUserList()
+        },
+        handleCurrentChange(newPage) {
+            this.searchReq.pageNum = newPage
+            this.getOnlineUserList()
+        },
         handleSelectChange(val){
             this.selectRows = val
+        },
+        resetSearchReq(){
+            this.searchReq = {
+                loginCity: '',
+                loginIp: '',
+                actived: null,
+                pageNum: 0,
+                pageSize: 10
+            }
         },
         async batchOffline(){
             let fieldSet = new Set()
@@ -159,6 +177,9 @@ export default {
             .catch(err => {
                 return this.$message.error('批量下线失败')
             })
+        },
+        selectChange(){
+            this.resetSearchReq()
         }
         
     }
@@ -204,5 +225,9 @@ export default {
 
 .el-select {
     width: 130px;
+}
+
+.el-alert {
+    margin-bottom: 10px;
 }
 </style>
