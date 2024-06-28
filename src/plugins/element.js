@@ -7,7 +7,7 @@ import { Button, Form, FormItem,
     Card,Row,Col,Alert,RadioGroup,RadioButton,
     Table,TableColumn,Switch,Tooltip,Pagination,
     Dialog,Dropdown, DropdownMenu,DropdownItem,
-    MessageBox,Tree,Select,Option,
+    MessageBox,Tree,Select,Option,Popover,
     Tag} from 'element-ui';
 
 Vue.use(Button)
@@ -43,5 +43,6 @@ Vue.use(Option)
 Vue.use(Alert)
 Vue.use(RadioGroup)
 Vue.use(RadioButton)
+Vue.use(Popover)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

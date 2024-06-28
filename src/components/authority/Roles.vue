@@ -46,7 +46,17 @@
                 <el-table-column label="操作" width="300px">
                     <template slot-scope="scope">
                         <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
-                        <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+                        <el-popover placement="top" width="160"
+                            v-model="scope.row.deleteRolePopOver" visible-arrow=true>
+                            <span>确定删除吗？</span>
+                            <div style="text-align: right; margin: 0">
+                                <el-button size="mini" type="text"
+                                    @click="scope.row.deleteRolePopOver = false">取消</el-button>
+                                <el-button type="primary" size="mini" @click="deleteRole(scope.row.id)">确定</el-button>
+                            </div>
+                            <el-button size="mini" slot="reference" type="danger" 
+                            icon="el-icon-delete" style="margin: 10px;">删除</el-button>
+                        </el-popover>
                         <el-button size="mini" type="warning" icon="el-icon-setting"
                             @click="showRightDialog(scope.row)">分配权限</el-button>
                     </template>
@@ -76,6 +86,7 @@ export default {
             showRightDialogVisible: false,
             //添加角色对话框
             addRoleDialogVisible: false,
+            deleteRolePopOver: false,
             addRoleForm: {
                 roleName: '',
                 remark: ''
@@ -96,13 +107,16 @@ export default {
     },
     methods: {
         async getRoleList() {
-            const { data: res } = await this.$http.get('roleList')
-            if (res.code !== 200) {
-                this.$message.error('查询角色信息失败')
-            }
-            this.$message.success('查询角色信息成功')
-            this.roleList = res.data
-            console.log(this.roleList)
+            await this.$http.get('roleList')
+                .then(res => {
+                    this.roleList = res.data.data.map(item => ({
+                        ...item,
+                        deleteRolePopOver: false
+                    }))
+                }).catch(err => {
+                    console.log(err)
+                    return this.$message.error('查询角色信息失败')
+                })
         },
         //根据id删除对应权限
         async removeByRightId(role, rightId) {
@@ -165,16 +179,27 @@ export default {
             this.showRightDialogVisible = false
 
         },
-        addRole(){
-            const {data:res} = this.$http.post('addRole',this.addRoleForm)
-            .then(res => {
-                return this.$message.info('添加角色成功')
-            })
-            .catch(err => {
-                return this.$message.error('添加角色失败')
-            })
+        addRole() {
+            const { data: res } = this.$http.post('addRole', this.addRoleForm)
+                .then(res => {
+                    this.getRoleList()
+                    return this.$message.info('添加角色成功')
+                })
+                .catch(err => {
+                    return this.$message.error('添加角色失败')
+                })
             this.getRoleList()
             this.addRoleDialogVisible = false
+        },
+        deleteRole(roleId) {
+            const { data: res } = this.$http.put(`deleteRole/${roleId}`)
+                .then(res => {
+                    this.getRoleList()
+                    this.$message.info('删除角色成功')
+                })
+                .catch(err => {
+                    this.$message.error('删除角色失败')
+                })
         }
     }
 }
