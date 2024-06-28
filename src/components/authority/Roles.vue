@@ -8,9 +8,24 @@
         </el-breadcrumb>
 
         <el-card>
-            <el-col>
-                <el-button type="primary">添加角色</el-button>
+            <el-col style="margin-bottom: 10px;">
+                <el-button type="primary" @click="addRoleDialogVisible = true">添加角色</el-button>
             </el-col>
+
+            <el-dialog title="添加角色" :visible.sync="addRoleDialogVisible" width="50%">
+                <el-form :model="addRoleForm" label-width="70px">
+                    <el-form-item label="角色名称" prop="roleName">
+                        <el-input v-model="addRoleForm.roleName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="角色描述" prop="remark">
+                        <el-input v-model="addRoleForm.remark"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="addRoleDialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="addRole()">确 定</el-button>
+                </span>
+            </el-dialog>
 
             <el-table :data="roleList" border stripe>
                 <!--展开列-->
@@ -41,8 +56,8 @@
 
         <!-- 分配权限对话框 -->
         <el-dialog title="分配权限" :visible.sync="showRightDialogVisible" width="50%" @close="dialogClose">
-            <el-tree :data="rights" :props="treeNode" show-checkbox node-key="id"
-                :default-checked-keys="defKeys" ref="treeRef">
+            <el-tree :data="rights" :props="treeNode" show-checkbox node-key="id" :default-checked-keys="defKeys"
+                ref="treeRef">
             </el-tree>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="showRightDialogVisible = false">取 消</el-button>
@@ -59,6 +74,12 @@ export default {
             roleList: [],
             //控制分配权限对话框显示
             showRightDialogVisible: false,
+            //添加角色对话框
+            addRoleDialogVisible: false,
+            addRoleForm: {
+                roleName: '',
+                remark: ''
+            },
             //所有权限数据
             rights: [],
             treeNode: {
@@ -134,15 +155,26 @@ export default {
                 ...this.$refs.treeRef.getHalfCheckedKeys()
             ]
 
-            if(keys){
-                const { data: res} = await this.$http.post(`/updateRight/${this.roleId}`,keys)
-                if(res.code !== 200){
+            if (keys) {
+                const { data: res } = await this.$http.post(`/updateRight/${this.roleId}`, keys)
+                if (res.code !== 200) {
                     this.$message.error('更新角色权限失败')
                 }
             }
             this.getRoleList()
             this.showRightDialogVisible = false
 
+        },
+        addRole(){
+            const {data:res} = this.$http.post('addRole',this.addRoleForm)
+            .then(res => {
+                return this.$message.info('添加角色成功')
+            })
+            .catch(err => {
+                return this.$message.error('添加角色失败')
+            })
+            this.getRoleList()
+            this.addRoleDialogVisible = false
         }
     }
 }

@@ -1,10 +1,10 @@
 import Vue from "vue";
 import { Button, Form, FormItem, 
     Input, Message, Container, 
-    Header, Aside, Main, 
+    Header, Aside, Main,
     Menu, Submenu, MenuItemGroup, MenuItem,
     Breadcrumb,BreadcrumbItem,
-    Card,Row,Col,Alert,
+    Card,Row,Col,Alert,RadioGroup,RadioButton,
     Table,TableColumn,Switch,Tooltip,Pagination,
     Dialog,Dropdown, DropdownMenu,DropdownItem,
     MessageBox,Tree,Select,Option,
@@ -41,5 +41,7 @@ Vue.use(DropdownItem)
 Vue.use(Select)
 Vue.use(Option)
 Vue.use(Alert)
+Vue.use(RadioGroup)
+Vue.use(RadioButton)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
