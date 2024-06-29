@@ -1,14 +1,14 @@
 import Vue from "vue";
 import { Button, Form, FormItem, 
     Input, Message, Container, 
-    Header, Aside, Main,
+    Header, Aside, Main,Notification,
     Menu, Submenu, MenuItemGroup, MenuItem,
     Breadcrumb,BreadcrumbItem,
     Card,Row,Col,Alert,RadioGroup,RadioButton,
     Table,TableColumn,Switch,Tooltip,Pagination,
     Dialog,Dropdown, DropdownMenu,DropdownItem,
     MessageBox,Tree,Select,Option,Popover,
-    Tag} from 'element-ui';
+    Tag,Avatar} from 'element-ui';
 
 Vue.use(Button)
 Vue.use(Form)
@@ -44,5 +44,7 @@ Vue.use(Alert)
 Vue.use(RadioGroup)
 Vue.use(RadioButton)
 Vue.use(Popover)
+Vue.use(Avatar)
+Vue.prototype.$notify = Notification
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

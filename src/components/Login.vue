@@ -57,13 +57,13 @@ export default{
             this.$refs.loginFormRef.validate(async valid =>{
                 if(!valid) return;
                 const result = await this.$http.post("login", this.loginForm);
-                console.log(result);
                 const res = result.data;
                 // const { data: res } = await this.$http.post("login", this.loginForm);
                 if (res.code !== 200) return this.$message.error('登录失败！');
                 this.$message.success("登录成功!");
+                console.log(res.data)
                 //将token保存到 sessionStorage 中
-                window.sessionStorage.setItem("token", res.data.token);
+                window.sessionStorage.setItem("userId", res.data.userId);
                 this.$store.state.userInfo = res.data
                 //跳转到 home 主页
                 this.$router.push("/home");

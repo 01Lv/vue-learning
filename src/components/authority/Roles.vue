@@ -46,16 +46,16 @@
                 <el-table-column label="操作" width="300px">
                     <template slot-scope="scope">
                         <el-button size="mini" type="primary" icon="el-icon-edit">编辑</el-button>
-                        <el-popover placement="top" width="160"
-                            v-model="scope.row.deleteRolePopOver" visible-arrow=true>
+                        <el-popover placement="top" width="160" v-model="scope.row.deleteRolePopOver"
+                            visible-arrow=true>
                             <span>确定删除吗？</span>
                             <div style="text-align: right; margin: 0">
                                 <el-button size="mini" type="text"
                                     @click="scope.row.deleteRolePopOver = false">取消</el-button>
                                 <el-button type="primary" size="mini" @click="deleteRole(scope.row.id)">确定</el-button>
                             </div>
-                            <el-button size="mini" slot="reference" type="danger" 
-                            icon="el-icon-delete" style="margin: 10px;">删除</el-button>
+                            <el-button size="mini" slot="reference" type="danger" icon="el-icon-delete"
+                                style="margin: 10px;">删除</el-button>
                         </el-popover>
                         <el-button size="mini" type="warning" icon="el-icon-setting"
                             @click="showRightDialog(scope.row)">分配权限</el-button>
@@ -114,7 +114,10 @@ export default {
                         deleteRolePopOver: false
                     }))
                 }).catch(err => {
-                    console.log(err)
+                    this.$notify({
+                        title: '提示',
+                        message: err,
+                    });
                     return this.$message.error('查询角色信息失败')
                 })
         },

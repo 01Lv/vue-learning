@@ -67,7 +67,7 @@ router.beforeEach((to, from, next) => {
     //next 是函数，表示放行
     if (to.path === '/login') return next()
     //获取token
-    const tokenStr = window.sessionStorage.getItem('token')
+    const tokenStr = window.sessionStorage.getItem('userId')
     if (!tokenStr) return next('/login');
     next()
 })

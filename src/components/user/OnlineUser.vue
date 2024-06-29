@@ -130,8 +130,8 @@ export default {
                     return this.$message.error('调用下线接口失败')
                 })
 
-            window.sessionStorage.removeItem('token')
-            if (!window.sessionStorage.getItem('token')) {
+            window.sessionStorage.removeItem('userId')
+            if (!window.sessionStorage.getItem('userId')) {
                 this.getOnlineUserList()
                 return this.$message.info('下线成功')
             } else {
@@ -161,7 +161,7 @@ export default {
                 actived: null,
                 pageNum: 0,
                 pageSize: 10
-            }
+            } 
         },
         async batchOffline(){
             let fieldSet = new Set()
@@ -171,7 +171,7 @@ export default {
             const newArr = Array.from(fieldSet)
             const {data: res} = await this.$http.post('batchOffline',newArr)
             .then(res=> {
-                window.sessionStorage.removeItem('token')
+                window.sessionStorage.removeItem('userId')
                 return this.$message.info('批量下线成功')
             })
             .catch(err => {

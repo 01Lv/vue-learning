@@ -3,9 +3,22 @@
         <!-- header -->
         <el-header>
             <div>
-                <span>管理系统</span>
+                <span>vue-admin</span>
             </div>
-            <el-button type="info" @click="logout">退出</el-button>
+            <div class="c1">
+                <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                    style="margin-right: 10px;"></el-avatar>
+                <el-dropdown @command="handleCommand">
+                    <span class="el-dropdown-link">
+                        {{ userName }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+
+                    <el-dropdown-menu>
+                        <el-dropdown-item command="a">个人设置</el-dropdown-item>
+                        <el-dropdown-item command="b" @click="logout">退出登录</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </div>
         </el-header>
         <!-- body -->
         <el-container>
@@ -56,7 +69,8 @@ export default {
             isCollapse: false,
             //被激活的链接
             activePath: '',
-            toggleCollapseData: '<<<'
+            toggleCollapseData: '<<<',
+            userName: window.sessionStorage.getItem('userId')
         }
     },
     created() {
@@ -92,6 +106,11 @@ export default {
         saveNavState(activePath) {
             window.sessionStorage.setItem('activePath', activePath)
             this.activePath = activePath
+        },
+        handleCommand(command) {
+            if (command === 'b') {
+                this.logout()
+            }
         }
     }
 }
@@ -131,5 +150,11 @@ export default {
     color: #fff;
     text-align: center;
     cursor: pointer;
+}
+
+.c1 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 </style>
