@@ -8,27 +8,28 @@
         </el-breadcrumb>
 
         <div class="c1">
-            <span>生产分支: main</span>
-            <span>代码仓库: http://baidu.com</span>
+            <span>生产分支: {{ releaseInfo.prdBranch }}</span>
+            <span>代码仓库: {{ releaseInfo.codeRepo }}</span>
         </div>
         <el-divider></el-divider>
 
-        <el-tabs v-model="activeTab" @tab-click="">
+        <el-tabs v-model="activeTab">
             <el-tab-pane label="开发环境" name="dev">
                 <el-descriptions :column="5">
                     <el-descriptions-item label="发布分支">
-                        <el-tag size="small">xxx-dev</el-tag>
+                        <el-tag size="small">{{ devInfo.onlineBranch }}</el-tag>
                     </el-descriptions-item>
-                    <el-descriptions-item label="最后操作人">苏州市</el-descriptions-item>
-                    <el-descriptions-item label="最后执行时间">苏州市</el-descriptions-item>
-                    <el-descriptions-item label="命名空间">18100000000</el-descriptions-item>
+                    <el-descriptions-item label="最后操作人">{{ devInfo.lastModifiedBy }}</el-descriptions-item>
+                    <el-descriptions-item label="最后执行时间">{{ devInfo.lastModifiedDate }}</el-descriptions-item>
+                    <el-descriptions-item label="命名空间">{{ devInfo.nameSpace }}</el-descriptions-item>
                     <el-descriptions-item label="发布状态">
-                        <el-tag type="success" size="small">成功</el-tag>
+                        <el-tag type="success" size="small" v-if="devInfo.releaseStatus === 1">成功</el-tag>
+                        <el-tag type="danger" size="small" v-if="devInfo.releaseStatus === 2">失败</el-tag>
                     </el-descriptions-item>
                     <el-descriptions-item label="发布日志">
-                        <el-link type="primary">6699</el-link>
+                        <el-link type="primary">{{ devInfo.releaseLogId }}</el-link>
                     </el-descriptions-item>
-                    <el-descriptions-item label="发布镜像">18100000000</el-descriptions-item>
+                    <el-descriptions-item label="发布镜像">{{ devInfo.releaseMirror }}</el-descriptions-item>
                 </el-descriptions>
 
                 <el-button type="primary" size="medium">发布</el-button>
@@ -68,6 +69,7 @@
                 </el-card>
             </el-tab-pane>
             <el-tab-pane label="测试环境" name="test">测试环境</el-tab-pane>
+            <el-tab-pane label="预生产环境" name="pre">预生产环境</el-tab-pane>
             <el-tab-pane label="生产环境" name="prd">生产环境</el-tab-pane>
         </el-tabs>
     </div>
@@ -109,10 +111,29 @@ export default {
                     createDate: '20240708'
                 }
             ],
-            branchs: []
+            branchs: [],
+            releaseInfo: {},
+            devInfo: {}
+            
         }
     },
+    created() {
+        this.release()
+    },
     methods: {
+        async release(){
+            await this.$http.get('/release/1')
+            .then(res => {
+                console.log(res)
+                this.releaseInfo = res.data.data
+                this.releaseInfo.envContents.forEach(e => {
+                    if(e.envId === 'dev') this.devInfo = e
+                });
+            })
+            .catch(err => {
+                this.$message.error('获取发布消息失败')
+            })
+        },
         getBranchs() {
             this.editBranchVisible = true
         }
