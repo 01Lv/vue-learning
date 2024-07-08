@@ -15,38 +15,56 @@
 
         <el-tabs v-model="activeTab" @tab-click="">
             <el-tab-pane label="开发环境" name="dev">
-                <el-descriptions>
-                    <el-descriptions-item label="发布分支">kooriookami</el-descriptions-item>
-                    <el-descriptions-item label="命名空间">18100000000</el-descriptions-item>
-                    <el-descriptions-item label="最后操作人">苏州市</el-descriptions-item>
-                    <el-descriptions-item label="备注">
-                        <el-tag size="small">学校</el-tag>
+                <el-descriptions :column="5">
+                    <el-descriptions-item label="发布分支">
+                        <el-tag size="small">xxx-dev</el-tag>
                     </el-descriptions-item>
-                    <el-descriptions-item label="联系地址">江苏省苏州市吴中区吴中大道 1188 号</el-descriptions-item>
+                    <el-descriptions-item label="最后操作人">苏州市</el-descriptions-item>
+                    <el-descriptions-item label="最后执行时间">苏州市</el-descriptions-item>
+                    <el-descriptions-item label="命名空间">18100000000</el-descriptions-item>
+                    <el-descriptions-item label="发布状态">
+                        <el-tag type="success" size="small">成功</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="发布日志">
+                        <el-link type="primary">6699</el-link>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="发布镜像">18100000000</el-descriptions-item>
                 </el-descriptions>
 
                 <el-button type="primary" size="medium">发布</el-button>
-                <el-button type="warning" size="medium">管理分支</el-button>
+                <el-button type="warning" size="medium" @click="getBranchs()">管理分支</el-button>
                 <el-divider></el-divider>
 
-                <!-- <el-card class="box-card" shadow="always">
-                    <div slot="header" class="clearfix">
-                        <el-tag type="info">未发布</el-tag>
-                        <span>分支名称</span>
-                        <el-button type="primary" icon="el-icon-caret-right" size="small" circle></el-button>
-                    </div>
-                </el-card> -->
+                <el-dialog title="编辑发布分支" :visible.sync="editBranchVisible">
+                    <el-table :data="branchs" style="width: 1120px;">
+                        <el-table-column prop="createDate" label="创建时间">
+                        </el-table-column>
+                        <el-table-column prop="branch" label="分支">
+                        </el-table-column>
+                        <el-table-column prop="lastUpdateBy" label="最后操作人">
+                        </el-table-column>
+                        <el-table-column prop="desc" label="描述">
+                        </el-table-column>
+                        <el-table-column prop="operate" label="操作">
+                        </el-table-column>
+                    </el-table>
+
+                </el-dialog>
 
                 <el-card v-for="e in cards" :key="e.id" class="box-card" shadow="always">
                     <div slot="header" class="clearfix">
-                        <el-tag type="info">{{ e.status }}</el-tag>
+                        <el-tag v-if="e.status === 1" type="info">未发布</el-tag>
+                        <el-tag v-if="e.status === 2" type="success">已发布</el-tag>
+                        <el-tag v-if="e.status === 3" type="danger">合并冲突</el-tag>
                         <span>{{ e.branchName }}</span>
-                        <el-button type="primary" icon="el-icon-caret-right" size="small" circle></el-button>
+                        <el-tooltip class="item" effect="dark" content="仅对当前分支合并,其他开发分支内容丢失" placement="top">
+                            <el-button type="primary" icon="el-icon-caret-right" size="small" circle></el-button>
+                        </el-tooltip>
                     </div>
-                    <div>
-                        <span>创建人：{{ e.createBy }}</span>
-                        <span>创建日期：{{ e.createDate }}</span>
-                    </div>
+                    <el-descriptions :column="1">
+                        <el-descriptions-item label="创建人">{{ e.createBy }}</el-descriptions-item>
+                        <el-descriptions-item label="创建日期">{{ e.createDate }}</el-descriptions-item>
+                    </el-descriptions>
                 </el-card>
             </el-tab-pane>
             <el-tab-pane label="测试环境" name="test">测试环境</el-tab-pane>
@@ -60,6 +78,7 @@ export default {
     data() {
         return {
             activeTab: 'dev',
+            editBranchVisible: false,
             cards: [
                 {
                     id: 1,
@@ -77,26 +96,25 @@ export default {
                 },
                 {
                     id: 3,
-                    status: 3,
-                    branchName: 'branch2',
-                    createBy: 'eason',
-                    createDate: '20240708'
-                },
-                {
-                    id: 2,
                     status: 2,
                     branchName: 'branch2',
                     createBy: 'eason',
                     createDate: '20240708'
                 },
                 {
-                    id: 3,
+                    id: 4,
                     status: 3,
                     branchName: 'branch2',
                     createBy: 'eason',
                     createDate: '20240708'
                 }
-            ]
+            ],
+            branchs: []
+        }
+    },
+    methods: {
+        getBranchs() {
+            this.editBranchVisible = true
         }
     }
 }

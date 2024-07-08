@@ -3,7 +3,7 @@ import { Button, Form, FormItem,
     Input, Message, Container, 
     Header, Aside, Main,Notification,
     Menu, Submenu, MenuItemGroup, MenuItem,
-    Breadcrumb,BreadcrumbItem,
+    Breadcrumb,BreadcrumbItem,Link,
     Card,Row,Col,Alert,RadioGroup,RadioButton,
     Table,TableColumn,Switch,Tooltip,Pagination,
     Dialog,Dropdown, DropdownMenu,DropdownItem,
@@ -52,6 +52,7 @@ Vue.use(Tabs)
 Vue.use(TabPane)
 Vue.use(Descriptions)
 Vue.use(DescriptionsItem)
+Vue.use(Link)
 Vue.prototype.$notify = Notification
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
