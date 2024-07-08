@@ -9,6 +9,7 @@ import Roles from './components/authority/Roles.vue'
 import Category from './components/goods/Category.vue'
 import NotFound from './components/exception/404.vue'
 import OnlineUser from './components/user/OnlineUser.vue'
+import Publish from './components/code/Publish.vue'
 
 Vue.use(VueRouter)
 
@@ -50,6 +51,10 @@ const router = new VueRouter({
                 {
                     path: '/onlineUser',
                     component: OnlineUser
+                },
+                {
+                    path: '/publishCode',
+                    component: Publish
                 }
             ]
         },

@@ -136,7 +136,7 @@ export default {
 }
 
 .el-main {
-    background-color: antiquewhite;
+    background-color: rgb(255, 255, 255);
 }
 
 .home-container {

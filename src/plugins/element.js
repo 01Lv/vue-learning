@@ -8,7 +8,8 @@ import { Button, Form, FormItem,
     Table,TableColumn,Switch,Tooltip,Pagination,
     Dialog,Dropdown, DropdownMenu,DropdownItem,
     MessageBox,Tree,Select,Option,Popover,
-    Tag,Avatar} from 'element-ui';
+    Tag,Avatar,Divider,PageHeader,Tabs,
+    TabPane,Descriptions,DescriptionsItem} from 'element-ui';
 
 Vue.use(Button)
 Vue.use(Form)
@@ -45,6 +46,12 @@ Vue.use(RadioGroup)
 Vue.use(RadioButton)
 Vue.use(Popover)
 Vue.use(Avatar)
+Vue.use(Divider)
+Vue.use(PageHeader)
+Vue.use(Tabs)
+Vue.use(TabPane)
+Vue.use(Descriptions)
+Vue.use(DescriptionsItem)
 Vue.prototype.$notify = Notification
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
