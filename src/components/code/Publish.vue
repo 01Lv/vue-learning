@@ -54,17 +54,20 @@
 
                 <el-card v-for="e in cards" :key="e.id" class="box-card" shadow="always">
                     <div slot="header" class="clearfix">
-                        <el-tag v-if="e.status === 1" type="info">未发布</el-tag>
-                        <el-tag v-if="e.status === 2" type="success">已发布</el-tag>
-                        <el-tag v-if="e.status === 3" type="danger">合并冲突</el-tag>
+                        <el-tag v-if="e.releaseStatus === 1" type="info">未发布</el-tag>
+                        <el-tag v-if="e.releaseStatus === 2" type="success">已发布</el-tag>
+                        <el-tag v-if="e.releaseStatus === 3" type="danger">合并冲突</el-tag>
                         <span>{{ e.branchName }}</span>
                         <el-tooltip class="item" effect="dark" content="仅对当前分支合并,其他开发分支内容丢失" placement="top">
                             <el-button type="primary" icon="el-icon-caret-right" size="small" circle></el-button>
                         </el-tooltip>
                     </div>
                     <el-descriptions :column="1">
-                        <el-descriptions-item label="创建人">{{ e.createBy }}</el-descriptions-item>
-                        <el-descriptions-item label="创建日期">{{ e.createDate }}</el-descriptions-item>
+                        <el-descriptions-item label="创建人">{{ e.createdBy }}</el-descriptions-item>
+                        <el-descriptions-item label="创建日期">{{ e.createdDate }}</el-descriptions-item>
+                        <el-descriptions-item label="提交人">{{ e.submitPersonName }}</el-descriptions-item>
+                        <el-descriptions-item label="提交日期">{{ e.submitTime }}</el-descriptions-item>
+                        <el-descriptions-item label="提交内容">{{ e.submitContent }}</el-descriptions-item>
                     </el-descriptions>
                 </el-card>
             </el-tab-pane>
@@ -127,7 +130,10 @@ export default {
                 console.log(res)
                 this.releaseInfo = res.data.data
                 this.releaseInfo.envContents.forEach(e => {
-                    if(e.envId === 'dev') this.devInfo = e
+                    if(e.envId === 'dev') {
+                        this.devInfo = e
+                        this.cards = this.devInfo.cardContentList
+                    }
                 });
             })
             .catch(err => {
