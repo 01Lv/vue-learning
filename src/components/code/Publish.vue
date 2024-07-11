@@ -8,6 +8,7 @@
         </el-breadcrumb>
 
         <div class="c1">
+            <span>{{ releaseInfo.projectName }}</span>
             <span>生产分支: {{ releaseInfo.prdBranch }}</span>
             <span>代码仓库: {{ releaseInfo.codeRepo }}</span>
         </div>
@@ -37,16 +38,19 @@
                 <el-divider></el-divider>
 
                 <el-dialog title="编辑发布分支" :visible.sync="editBranchVisible">
-                    <el-table :data="branchs" style="width: 1120px;">
-                        <el-table-column prop="createDate" label="创建时间">
+                    <el-table :data="branches">
+                        <el-table-column prop="committedDate" label="创建时间">
                         </el-table-column>
-                        <el-table-column prop="branch" label="分支">
+                        <el-table-column prop="name" label="分支">
                         </el-table-column>
-                        <el-table-column prop="lastUpdateBy" label="最后操作人">
+                        <el-table-column prop="authorName" label="最后操作人">
                         </el-table-column>
-                        <el-table-column prop="desc" label="描述">
+                        <el-table-column prop="message" label="描述">
                         </el-table-column>
                         <el-table-column prop="operate" label="操作">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini">添加</el-button>
+                            </template>
                         </el-table-column>
                     </el-table>
 
@@ -84,64 +88,47 @@ export default {
         return {
             activeTab: 'dev',
             editBranchVisible: false,
-            cards: [
-                {
-                    id: 1,
-                    status: 1,
-                    branchName: 'branch1',
-                    createBy: 'eason',
-                    createDate: '20240708'
-                },
-                {
-                    id: 2,
-                    status: 2,
-                    branchName: 'branch2',
-                    createBy: 'eason',
-                    createDate: '20240708'
-                },
-                {
-                    id: 3,
-                    status: 2,
-                    branchName: 'branch2',
-                    createBy: 'eason',
-                    createDate: '20240708'
-                },
-                {
-                    id: 4,
-                    status: 3,
-                    branchName: 'branch2',
-                    createBy: 'eason',
-                    createDate: '20240708'
-                }
-            ],
-            branchs: [],
+            cards: [],
+            branches: [],
             releaseInfo: {},
             devInfo: {}
-            
+
         }
     },
     created() {
         this.release()
     },
     methods: {
-        async release(){
-            await this.$http.get('/release/1')
-            .then(res => {
-                console.log(res)
-                this.releaseInfo = res.data.data
-                this.releaseInfo.envContents.forEach(e => {
-                    if(e.envId === 'dev') {
-                        this.devInfo = e
-                        this.cards = this.devInfo.cardContentList
+        async release() {
+            await this.$http.get('/release/1228')
+                .then(res => {
+                    console.log(res)
+                    this.releaseInfo = res.data.data
+                    if (this.releaseInfo.envContents) {
+                        this.releaseInfo.envContents.forEach(e => {
+                            if (e.envId === 'dev') {
+                                this.devInfo = e
+                                this.cards = this.devInfo.cardContentList
+                            }
+                        });
                     }
-                });
-            })
-            .catch(err => {
-                this.$message.error('获取发布消息失败')
-            })
+                })
+                .catch(err => {
+                    this.$message.error('获取发布消息失败')
+                    console.log(err)
+                })
         },
-        getBranchs() {
+        async getBranchs() {
             this.editBranchVisible = true
+
+            await this.$http.get('getBranches')
+                .then(res => {
+                    this.branches = res.data.data
+                    console.log(this.branches)
+                })
+                .catch(err => {
+                    this.$message.error('获取分支列表失败')
+                })
         }
     }
 }
@@ -171,5 +158,9 @@ export default {
 .clearfix {
     display: flex;
     justify-content: space-between;
+}
+
+.el-dialog__body {
+    font-size: 20px;
 }
 </style>
