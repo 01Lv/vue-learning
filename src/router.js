@@ -10,6 +10,7 @@ import Category from './components/goods/Category.vue'
 import NotFound from './components/exception/404.vue'
 import OnlineUser from './components/user/OnlineUser.vue'
 import Publish from './components/code/Publish.vue'
+import Project from './components/code/Project.vue'
 
 Vue.use(VueRouter)
 
@@ -53,7 +54,11 @@ const router = new VueRouter({
                     component: OnlineUser
                 },
                 {
-                    path: '/publishCode',
+                    path: '/project',
+                    component: Project
+                },
+                {
+                    path: '/publish/:id',
                     component: Publish
                 }
             ]

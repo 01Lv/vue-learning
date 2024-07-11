@@ -3,7 +3,7 @@
         <!-- 面包屑导航区域 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>代码管理</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/project'}">项目管理</el-breadcrumb-item>
             <el-breadcrumb-item>代码发布</el-breadcrumb-item>
         </el-breadcrumb>
 
@@ -18,12 +18,23 @@
             <el-tab-pane label="开发环境" name="dev">
                 <el-descriptions :column="5">
                     <el-descriptions-item label="发布分支">
-                        <el-tag size="small">{{ devInfo.onlineBranch }}</el-tag>
+                        <el-tag size="small" v-if="!devInfo.onlineBranch">-</el-tag>
+                        <el-tag size="small" v-if="devInfo.onlineBranch">{{ devInfo.onlineBranch }}</el-tag>
                     </el-descriptions-item>
-                    <el-descriptions-item label="最后操作人">{{ devInfo.lastModifiedBy }}</el-descriptions-item>
-                    <el-descriptions-item label="最后执行时间">{{ devInfo.lastModifiedDate }}</el-descriptions-item>
-                    <el-descriptions-item label="命名空间">{{ devInfo.nameSpace }}</el-descriptions-item>
+                    <el-descriptions-item label="最后操作人">
+                        <span v-if="devInfo.lastModifiedBy">{{ devInfo.lastModifiedBy }}</span>
+                        <span v-if="!devInfo.lastModifiedBy">-</span>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="最后执行时间">
+                        <span v-if="devInfo.lastModifiedDate">{{ devInfo.lastModifiedDate }}</span>
+                        <span v-if="!devInfo.lastModifiedDate">-</span>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="命名空间">
+                        <span v-if="devInfo.nameSpace">{{ devInfo.nameSpace }}</span>
+                        <span v-if="!devInfo.nameSpace">-</span>
+                    </el-descriptions-item>
                     <el-descriptions-item label="发布状态">
+                        <el-tag type="info" size="small" v-if="!devInfo.releaseStatus">-</el-tag>
                         <el-tag type="success" size="small" v-if="devInfo.releaseStatus === 1">成功</el-tag>
                         <el-tag type="danger" size="small" v-if="devInfo.releaseStatus === 2">失败</el-tag>
                     </el-descriptions-item>
@@ -96,11 +107,11 @@ export default {
         }
     },
     created() {
-        this.release()
+        this.release(this.$route.params.id)
     },
     methods: {
-        async release() {
-            await this.$http.get('/release/1228')
+        async release(id) {
+            await this.$http.get(`/release/${id}`)
                 .then(res => {
                     console.log(res)
                     this.releaseInfo = res.data.data
