@@ -3,7 +3,7 @@
         <!-- 面包屑导航区域 -->
         <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item :to="{ path: '/project'}">项目管理</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/project' }">项目管理</el-breadcrumb-item>
             <el-breadcrumb-item>代码发布</el-breadcrumb-item>
         </el-breadcrumb>
 
@@ -35,6 +35,7 @@
                     </el-descriptions-item>
                     <el-descriptions-item label="发布状态">
                         <el-tag type="info" size="small" v-if="!devInfo.releaseStatus">-</el-tag>
+                        <el-tag type="info" size="small" v-if="devInfo.releaseStatus === -1">未发布</el-tag>
                         <el-tag type="success" size="small" v-if="devInfo.releaseStatus === 1">成功</el-tag>
                         <el-tag type="danger" size="small" v-if="devInfo.releaseStatus === 2">失败</el-tag>
                     </el-descriptions-item>
@@ -44,7 +45,7 @@
                 <el-button type="warning" size="medium" @click="getBranchs()">管理分支</el-button>
                 <el-divider></el-divider>
 
-                <el-dialog title="编辑发布分支" :visible.sync="editBranchVisible">
+                <el-dialog title="编辑发布分支" :visible.sync="editBranchVisible" @close="handleDialogClose()">
                     <el-table :data="branches">
                         <el-table-column prop="committedDate" label="创建时间">
                         </el-table-column>
@@ -56,32 +57,39 @@
                         </el-table-column>
                         <el-table-column prop="operate" label="操作">
                             <template slot-scope="scope">
-                                <el-button type="primary" size="mini" v-if="!scope.row.addBranched" @click="addBranch(scope)">添加</el-button>
-                                <el-button type="info" size="mini" v-if="scope.row.addBranched" :disabled="true">已添加</el-button>
+                                <el-button type="primary" size="mini" v-if="!scope.row.addBranched"
+                                    @click="addBranch(scope)">添加</el-button>
+                                <el-button type="info" size="mini" v-if="scope.row.addBranched"
+                                    :disabled="true">已添加</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
-
                 </el-dialog>
 
-                <el-card v-for="e in cards" :key="e.id" class="box-card" shadow="always">
-                    <div slot="header" class="clearfix">
-                        <el-tag v-if="e.releaseStatus === 1" type="info">未发布</el-tag>
-                        <el-tag v-if="e.releaseStatus === 2" type="success">已发布</el-tag>
-                        <el-tag v-if="e.releaseStatus === 3" type="danger">合并冲突</el-tag>
-                        <span>{{ e.name }}</span>
-                        <el-tooltip class="item" effect="dark" content="仅对当前分支合并,其他开发分支内容丢失" placement="top">
-                            <el-button type="primary" icon="el-icon-caret-right" size="small" circle></el-button>
-                        </el-tooltip>
-                    </div>
-                    <el-descriptions :column="1">
-                        <el-descriptions-item label="提交人">{{ e.authorName }}</el-descriptions-item>
-                        <el-descriptions-item label="提交日期">{{ e.submitTime }}</el-descriptions-item>
-                        <el-descriptions-item label="提交内容">{{ e.submitContent }}</el-descriptions-item>
-                    </el-descriptions>
-                </el-card>
+                <el-row :gutter="20">
+                    <el-col :span="6" v-for="e in cards" :key="e.id">
+                        <el-card class="card-container" shadow="always">
+                            <div slot="header" class="clearfix">
+                                <el-tag v-if="e.releaseStatus === 1" type="info">未发布</el-tag>
+                                <el-tag v-if="e.releaseStatus === 2" type="success">已发布</el-tag>
+                                <el-tag v-if="e.releaseStatus === 3" type="danger">合并冲突</el-tag>
+                                <span>{{ e.name }}</span>
+                                <el-tooltip class="item" effect="dark" content="仅对当前分支合并,其他开发分支内容丢失" placement="top">
+                                    <el-button type="primary" icon="el-icon-caret-right" size="small"
+                                        circle></el-button>
+                                </el-tooltip>
+                            </div>
+                            <el-descriptions :column="1">
+                                <el-descriptions-item label="提交人">{{ e.authorName }}</el-descriptions-item>
+                                <el-descriptions-item label="提交日期">{{ e.committedDate }}</el-descriptions-item>
+                                <el-descriptions-item label="提交内容">{{ e.message }}</el-descriptions-item>
+                            </el-descriptions>
+                        </el-card>
+                    </el-col>
+                </el-row>
             </el-tab-pane>
-            <el-tab-pane label="测试环境" name="test">测试环境</el-tab-pane>
+            <el-tab-pane label="测试环境" name="test">
+            </el-tab-pane>
             <el-tab-pane label="预生产环境" name="pre">预生产环境</el-tab-pane>
             <el-tab-pane label="生产环境" name="prd">生产环境</el-tab-pane>
         </el-tabs>
@@ -142,21 +150,24 @@ export default {
                     this.$message.error('获取分支列表失败')
                 })
         },
-        addBranch(scope){
+        addBranch(scope) {
             this.addBranchReq = {
                 envId: this.activeTab,
                 projectId: scope.row.projectId,
                 sourceBranch: scope.row.name
             }
-            this.$http.post('addBranch',this.addBranchReq)
-            .then(res => {
-                this.$message.success('添加分支成功')
-                this.getBranchs()
-            })
-            .catch(err => {
-                return this.$message.error('添加分支失败')
-                console.log(err)
-            })
+            this.$http.post('addBranch', this.addBranchReq)
+                .then(res => {
+                    this.$message.success('添加分支成功')
+                    this.getBranchs()
+                })
+                .catch(err => {
+                    return this.$message.error('添加分支失败')
+                    console.log(err)
+                })
+        },
+        handleDialogClose() {
+            this.release(this.projectId)
         }
     }
 }
@@ -186,9 +197,13 @@ export default {
 .clearfix {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.el-dialog__body {
-    font-size: 20px;
+.card-container {
+    width: 100%;
+    /* 设置卡片的宽度为100% */
+    height: 260px;
+    /* 设置卡片的高度 */
 }
 </style>
