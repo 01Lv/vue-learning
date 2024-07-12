@@ -59,21 +59,26 @@
                             <template slot-scope="scope">
                                 <el-button type="primary" size="mini" v-if="!scope.row.addBranched"
                                     @click="addBranch(scope)">添加</el-button>
-                                <el-button type="info" size="mini" v-if="scope.row.addBranched"
-                                    :disabled="true">已添加</el-button>
+                                <el-tooltip class="item" effect="dark" content="下线需重新新建临时合并分支"
+                                    placement="top">
+                                    <el-button type="info" size="mini" v-if="scope.row.addBranched"
+                                    @click="deleteBranch(scope)">下线</el-button>
+                                </el-tooltip>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-dialog>
 
                 <el-row :gutter="20">
-                    <el-col :span="6" v-for="e in cards" :key="e.id">
+                    <el-col :span="6" v-for="e in cards" :key="e.id" class="card-col">
                         <el-card class="card-container" shadow="always">
                             <div slot="header" class="clearfix">
                                 <el-tag v-if="e.releaseStatus === 1" type="info">未发布</el-tag>
                                 <el-tag v-if="e.releaseStatus === 2" type="success">已发布</el-tag>
                                 <el-tag v-if="e.releaseStatus === 3" type="danger">合并冲突</el-tag>
-                                <span>{{ e.name }}</span>
+                                <el-tooltip class="item" effect="dark" :content="e.name" placement="top">
+                                    <span class="branch-name">{{ e.name }}</span>
+                                </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="仅对当前分支合并,其他开发分支内容丢失" placement="top">
                                     <el-button type="primary" icon="el-icon-caret-right" size="small"
                                         circle></el-button>
@@ -168,6 +173,17 @@ export default {
         },
         handleDialogClose() {
             this.release(this.projectId)
+        },
+        async deleteBranch(scope) {
+            await this.$http.delete(`deleteBranch/${scope.row.id}`)
+            .then(res => {
+                this.getBranchs()
+                this.$message.success('下线分支成功')
+            })
+            .catch(err => {
+                this.$message.error('下线分支失败')
+                console.log(err)
+            })
         }
     }
 }
@@ -188,12 +204,6 @@ export default {
     font-size: 12px;
 }
 
-.box-card {
-    display: inline-block;
-    width: 360px;
-    margin: 5px;
-}
-
 .clearfix {
     display: flex;
     justify-content: space-between;
@@ -202,8 +212,22 @@ export default {
 
 .card-container {
     width: 100%;
-    /* 设置卡片的宽度为100% */
     height: 260px;
-    /* 设置卡片的高度 */
+}
+
+/* 文字过长隐藏为缩略号 */
+.branch-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 200px;
+}
+
+.card-col {
+    margin-bottom: 20px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
 </style>
