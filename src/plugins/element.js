@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { Button, Form, FormItem, 
-    Input, Message, Container,
+    Input, Message, Container,Loading,
     Header, Aside, Main,Notification,
     Menu, Submenu, MenuItemGroup, MenuItem,
     Breadcrumb,BreadcrumbItem,Link,
@@ -53,6 +53,7 @@ Vue.use(TabPane)
 Vue.use(Descriptions)
 Vue.use(DescriptionsItem)
 Vue.use(Link)
+Vue.use(Loading.directive)
 Vue.prototype.$notify = Notification
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

@@ -59,10 +59,9 @@
                             <template slot-scope="scope">
                                 <el-button type="primary" size="mini" v-if="!scope.row.addBranched"
                                     @click="addBranch(scope)">添加</el-button>
-                                <el-tooltip class="item" effect="dark" content="下线需重新新建临时合并分支"
-                                    placement="top">
+                                <el-tooltip class="item" effect="dark" content="下线需新建临时合并分支" placement="top">
                                     <el-button type="info" size="mini" v-if="scope.row.addBranched"
-                                    @click="deleteBranch(scope)">下线</el-button>
+                                        @click="deleteBranch(scope)">下线</el-button>
                                 </el-tooltip>
                             </template>
                         </el-table-column>
@@ -117,6 +116,7 @@ export default {
                 sourceBranch: ''
             },
             projectId: 0,
+            getBranchLoading: false
         }
     },
     created() {
@@ -127,7 +127,6 @@ export default {
         async release(id) {
             await this.$http.get(`/release/${id}`)
                 .then(res => {
-                    console.log(res)
                     this.releaseInfo = res.data.data
                     if (this.releaseInfo.envContents) {
                         this.releaseInfo.envContents.forEach(e => {
@@ -145,11 +144,9 @@ export default {
         },
         async getBranchs() {
             this.editBranchVisible = true
-
             await this.$http.get(`getBranches/${this.projectId}/${this.activeTab}`)
                 .then(res => {
                     this.branches = res.data.data
-                    console.log(this.branches)
                 })
                 .catch(err => {
                     this.$message.error('获取分支列表失败')
@@ -176,14 +173,14 @@ export default {
         },
         async deleteBranch(scope) {
             await this.$http.delete(`deleteBranch/${scope.row.id}`)
-            .then(res => {
-                this.getBranchs()
-                this.$message.success('下线分支成功')
-            })
-            .catch(err => {
-                this.$message.error('下线分支失败')
-                console.log(err)
-            })
+                .then(res => {
+                    this.getBranchs()
+                    this.$message.success('下线分支成功')
+                })
+                .catch(err => {
+                    this.$message.error('下线分支失败')
+                    console.log(err)
+                })
         }
     }
 }
