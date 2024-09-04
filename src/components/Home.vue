@@ -3,7 +3,9 @@
         <!-- header -->
         <el-header>
             <div>
-                <span>vue-admin</span>
+                <el-link :underline="false" style="font-size: 18px; color: white" @click="returnHome()">
+                    vue-admin
+                </el-link>
             </div>
             <div class="c1">
                 <el-button type="info" icon="el-icon-message" circle style="margin-right: 10px;" @click="msgBtnClick()">
@@ -54,7 +56,7 @@
                 </el-menu>
             </el-aside>
             <!-- 右侧内容主体 -->
-            <el-main>
+            <el-main style="background-color: lightgray;">
                 <!-- 路由占位符-->
                 <router-view></router-view>
             </el-main>
@@ -122,6 +124,9 @@ export default {
         },
         msgBtnClick() {
             this.$refs.drawerRef.openDrawer()
+        },
+        returnHome() {
+            this.$router.push('/welcome')
         }
     }
 }

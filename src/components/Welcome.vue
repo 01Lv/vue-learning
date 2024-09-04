@@ -1,11 +1,74 @@
 <template>
-    <span>
-        <el-radio-group v-model="select" class="switch" size="mini">
+    <div>
+        <el-radio-group v-model="select" class="switch" size="medium">
             <el-radio-button v-for="i in iOptions" :key="i.value" :label="i.value">
                 {{ i.label }}
             </el-radio-button>
         </el-radio-group>
-    </span>
+
+        <el-row :gutter="20" style="padding: 10px 0;">
+            <el-col :span="12">
+                <div style="min-height: 108px;background-color: white;">
+                    <div style="padding-top: 10px;padding-left: 10px;padding-bottom: 10px;">
+                        <span>日志数据</span>
+                    </div>
+
+                    <el-row>
+                        <el-col :span="8">
+                            <div style="min-height: 72px;">
+                                <div style="font-size: 12px;color: gray;text-align: center;">登录数</div>
+                                <h1 style="text-align: center;">92</h1>
+                            </div>
+                        </el-col>
+                        <el-col :span="8">
+                            <div style="min-height: 72px;">
+                                <div style="font-size: 12px;color: gray;text-align: center;">操作日志数</div>
+                                <h1 style="text-align: center;">210</h1>
+                            </div>
+                        </el-col>
+                        <el-col :span="8">
+                            <div style="min-height: 72px;">
+                                <div style="font-size: 12px;color: gray;text-align: center;">改密日志数</div>
+                                <h1 style="text-align: center;">0</h1>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div style="background: #e5e9f2;min-height: 108px;"></div>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="20" style="padding: 10px 0;">
+            <el-col :span="12">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <div style="background: #d3dce6;min-height: 324px;"></div>
+                    </el-col>
+                    <el-col :span="12">
+                        <div style="background: #e5e9f2;min-height: 324px;"></div>
+                    </el-col>
+                </el-row>
+            </el-col>
+            <el-col :span="12">
+                <el-row>
+                    <el-col :span="24">
+                        <div style="background: #d3dce6;min-height: 206px;"></div>
+                    </el-col>
+                    <el-col :span="24" style="padding-top: 10px;">
+                        <div style="background: #e5e9f2;min-height: 108px;"></div>
+                    </el-col>
+                </el-row>
+            </el-col>
+        </el-row>
+
+        <el-row style="padding: 10px 0;">
+            <el-col :span="24">
+                <div style="background: #d3dce6;min-height: 324px;"></div>
+            </el-col>
+        </el-row>
+    </div>
 </template>
 
 <script>
@@ -37,31 +100,5 @@ export default {
 .switch {
     background: #EFF0F1;
     border-radius: 4px;
-    padding: 1px 4px;
-
-    .el-radio-button {
-        .el-radio-button__inner {
-            border: none;
-            color: #8F959E;
-            background: #EFF0F1;
-        }
-
-        &.is-active {
-            border-radius: 4px;
-            padding: 4px 0;
-            box-shadow: 2px 1px 2px rgba(0 0 0 / 8%);
-
-            .el-radio-button__inner {
-                color: black;
-                background-color: #FFF;
-                border-radius: 4px;
-                box-shadow: 0 2px 2px rgb(90 97 105 / 31%) !important;
-            }
-        }
-    }
-
-    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
-        box-shadow: none;
-    }
 }
 </style>
