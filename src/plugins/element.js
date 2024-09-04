@@ -1,9 +1,9 @@
 import Vue from "vue";
-import { Button, Form, FormItem, 
+import { Button, Form, FormItem,Badge,
     Input, Message, Container,Loading,
     Header, Aside, Main,Notification,
     Menu, Submenu, MenuItemGroup, MenuItem,
-    Breadcrumb,BreadcrumbItem,Link,
+    Breadcrumb,BreadcrumbItem,Link,Drawer,
     Card,Row,Col,Alert,RadioGroup,RadioButton,
     Table,TableColumn,Switch,Tooltip,Pagination,
     Dialog,Dropdown, DropdownMenu,DropdownItem,
@@ -53,6 +53,8 @@ Vue.use(TabPane)
 Vue.use(Descriptions)
 Vue.use(DescriptionsItem)
 Vue.use(Link)
+Vue.use(Drawer)
+Vue.use(Badge)
 Vue.use(Loading.directive)
 Vue.prototype.$notify = Notification
 Vue.prototype.$message = Message

@@ -86,23 +86,24 @@
 <script>
 export default {
     name: 'ReleaseInfoComp',
+    props: {
+        activeTab: '',
+        projectId: 0,
+        initCards: []
+    },
     data() {
         return {
             releaseInfo: {},
             editBranchVisible: false,
-            cards: [],
             branches: [],
             releaseBaseInfo: {},
+            cards: this.initCards,
             addBranchReq: {
                 envId: '',
                 projectId: 0,
                 sourceBranch: ''
             },
         }
-    },
-    props: {
-        activeTab: '',
-        projectId: 0
     },
     methods: {
         async release(id) {
@@ -111,10 +112,8 @@ export default {
                     this.releaseInfo = res.data.data
                     if (this.releaseInfo.envContents) {
                         this.releaseInfo.envContents.forEach(e => {
-                            if (e.envId === 'dev') {
-                                this.releaseBaseInfo = e
-                                this.cards = this.releaseBaseInfo.branchList
-                            }
+                            this.releaseBaseInfo = e
+                            this.cards = this.releaseBaseInfo.branchList
                         });
                     }
                 })

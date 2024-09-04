@@ -6,6 +6,9 @@
                 <span>vue-admin</span>
             </div>
             <div class="c1">
+                <el-button type="info" icon="el-icon-message" circle style="margin-right: 10px;" @click="msgBtnClick()">
+                </el-button>
+                <MsgDrawerComp ref="drawerRef"></MsgDrawerComp>
                 <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
                     style="margin-right: 10px;"></el-avatar>
                 <el-dropdown @command="handleCommand">
@@ -60,7 +63,12 @@
 </template>
 
 <script>
+import MsgDrawerComp from '@/components/common/MsgDrawerComp.vue'
+
 export default {
+    components: {
+        MsgDrawerComp
+    },
     data() {
         return {
             //左侧菜单数据
@@ -70,7 +78,7 @@ export default {
             //被激活的链接
             activePath: '',
             toggleCollapseData: '<<<',
-            userName: window.sessionStorage.getItem('userId')
+            userName: window.sessionStorage.getItem('userId'),
         }
     },
     created() {
@@ -111,6 +119,9 @@ export default {
             if (command === 'b') {
                 this.logout()
             }
+        },
+        msgBtnClick() {
+            this.$refs.drawerRef.openDrawer()
         }
     }
 }
