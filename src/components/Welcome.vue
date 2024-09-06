@@ -15,19 +15,19 @@
 
                     <el-row>
                         <el-col :span="8">
-                            <div style="min-height: 72px;">
+                            <div style="min-height: 66px;">
                                 <div style="font-size: 12px;color: gray;text-align: center;">登录数</div>
                                 <h1 style="text-align: center;">92</h1>
                             </div>
                         </el-col>
                         <el-col :span="8">
-                            <div style="min-height: 72px;">
+                            <div style="min-height: 66px;">
                                 <div style="font-size: 12px;color: gray;text-align: center;">操作日志数</div>
                                 <h1 style="text-align: center;">210</h1>
                             </div>
                         </el-col>
                         <el-col :span="8">
-                            <div style="min-height: 72px;">
+                            <div style="min-height: 66px;">
                                 <div style="font-size: 12px;color: gray;text-align: center;">改密日志数</div>
                                 <h1 style="text-align: center;">0</h1>
                             </div>
