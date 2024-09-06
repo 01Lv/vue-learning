@@ -12,6 +12,12 @@ import OnlineUser from './components/user/OnlineUser.vue'
 import Publish from './components/code/Publish.vue'
 import Project from './components/code/Project.vue'
 
+const original = VueRouter.prototype.push
+
+VueRouter.prototype.push = function push(location) {
+    return original.call(this,location).catch(err => err)
+}
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
